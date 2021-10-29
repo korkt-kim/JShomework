@@ -7,22 +7,34 @@ import TodoList from "./components/TodoList.js";
 
 export default class App extends component{
     constructor($app){
-        super({$app,initialState:{time:new Date(),isLoggedIn:false,username:'',todoList:[]},className:'app'});
+        super({$app,initialState:{time:'',isLoggedIn:false,username:'',todoList:[],route:'/'},className:'app'});
         const randomNumber = Math.floor(Math.random()*7 +1);
         $app.style.backgroundImage = `url(../assets/${randomNumber}.png)`;
         this.init();
+        window.history.pushState({...this.state},null,'/');
     }
 
     mounted(){
+        this.$target.innerHTML=''
         this.mountClock()
         this.mountGeoLocation();
-        this.mountLogin();
-        this.mountSignin();
-        this.mountTodoList();
+        switch (this.state.route){
+            case '/login':
+                console.log("asdf")
+                this.mountLogin();
+                break;
+            case '/signin':
+                this.mountSignin();
+                break;
+            default :
+                this.mountTodoList();
+                break;
+        }
+        
     }
 
     mountClock(){
-        this.clock = new Clock({$app:this.$target,initialState:this.state,proceedTime:()=>this.proceedTime.call(this.clock)});
+        this.clock = new Clock({$app:this.$target,initialState:this.state,proceedTime:()=>this.proceedTime.call(this.clock),onClickLogin:this.navigateToLogin.bind(this),onClickSignin:this.navigateToSignin.bind(this)});
     }
 
     mountLogin(){
@@ -69,11 +81,15 @@ export default class App extends component{
     }
 
     navigateToSignin(){
-
+        window.history.pushState({isLoggedIn:false,username:'',route:'/signin'},null,'/signin');
+        this.setState({...this.state,isLoggedIn:false,username:'',route:'/signin'})
+        this.mounted()
     }
 
     navigateToLogin(){
-
+        window.history.pushState({isLoggedIn:false,username:'',route:'/login'},null,'/login');
+        this.setState({...this.state,isLoggedIn:false,username:'',route:'/login'})
+        this.mounted()
     }
 
     onAddTodoList(){
@@ -86,6 +102,10 @@ export default class App extends component{
     }
 
     init(){
-        
+        window.addEventListener('popstate',(e)=>{
+            console.log(e);
+            this.setState({...this.state,route:e.state.route})
+            this.mounted();
+        })
     }
 }

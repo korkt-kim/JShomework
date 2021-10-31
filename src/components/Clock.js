@@ -24,6 +24,5 @@ export default class Clock extends component{
     
     render(){
         this.$target.innerHTML = `<h1>${this.state.time}</h1> <button class="loginBtn">login</button> <button class="signinBtn">signin</button>`;  
-        this.$target.style.backgroundColor="#EC87E4"
     }
 }

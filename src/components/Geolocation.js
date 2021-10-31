@@ -25,7 +25,7 @@ export default class Geolocation extends component{
     }
 
     onGeoError(){
-        this.$target.innerHTML = `<h1>위치를 알 수 없습니다.</h1>`
+        this.$target.innerHTML = `<div>위치를 알 수 없습니다.</div>`
     }
 
     render(){

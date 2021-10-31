@@ -1,11 +1,10 @@
 import component from "./core/component.js";
 
 export default class Clock extends component{
-    constructor({$app,initialState,proceedTime,onClickLogin,onClickSignin}){
+    constructor({$app,initialState,proceedTime,onClickLogin}){
         super({$app,initialState,className:'clock'});
         this.proceedTime = proceedTime;
         this.onClickLogin = onClickLogin;
-        this.onClickSignin = onClickSignin;
     }
 
     setEvent(){
@@ -16,13 +15,12 @@ export default class Clock extends component{
             if(e.target.closest('.loginBtn')){
                 this.onClickLogin();
             }
-            if(e.target.closest('.signinBtn')){
-                this.onClickSignin();
-            }
         })
     }
     
     render(){
-        this.$target.innerHTML = `<h1>${this.state.time}</h1> <button class="loginBtn">login</button> <button class="signinBtn">signin</button>`;  
+        this.$target.innerHTML = `<h1>${this.state.time}</h1> 
+        ${this.state.isLoggedIn ? `hi, ${this.state.username}` : `<button class="loginBtn">login</button>`} 
+        `
     }
 }

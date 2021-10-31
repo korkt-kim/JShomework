@@ -1,10 +1,10 @@
 import component from "./core/component.js";
 
 export default class Login extends component{
-    constructor({$app,initialState,onClickLogin,navigateToSignin}){
+    constructor({$app,initialState,onLogin,navigateToHome}){
         super({$app,initialState,tagName:'div',className:'login'});
-        this.onClickLogin = onClickLogin;
-        this.navigateToSignin = navigateToSignin;
+        this.onLogin = onLogin;
+        this.navigateToHome = navigateToHome;
     }
 
     setEvent(){
@@ -13,11 +13,10 @@ export default class Login extends component{
                 e.preventDefault();
                 const username = document.querySelector('.usernameInput').value;
                 const password = document.querySelector('.passwordInput').value;
-                this.onClickLogin(username,password);
-            }
-            if(e.target.closest('.signinLink')){
-                e.preventDefault();
-               this.navigateToSignin(); 
+                
+                if(this.onLogin(username,password)){
+                    this.navigateToHome();
+                }
             }
         })
     }
@@ -33,7 +32,6 @@ export default class Login extends component{
                     <input class="usernameInput" type="text" name="username" placeholder="username"/>
                     <input class="passwordInput" type="text" name="username" placeholder="password"/>
                     <button type="submit" class="loginBtn">Login</button>
-                    <a class="signinLink">don't have account</a>
                 </form>
             `
         }

@@ -1,40 +1,35 @@
 import Clock from './components/Clock.js';
 import GeoLocation from './components/Geolocation.js';
 import Login from "./components/Login.js";
-import Signin from "./components/Signin.js";
 import TodoList from "./components/TodoList.js";
 
 
 const routes = {
-    '/': function(){
-        console.log(this)
-        new Clock({$app:this.$target,initialState:this.state,proceedTime:this.proceedTime,onClickLogin:this.navigateToLogin.bind(this),onClickSignin:this.navigateToSignin.bind(this)});
-        new GeoLocation({$app:this.$target,initialState:this.state})
-        new TodoList({$app:this.$target,initialState:this.state});
+    '/': function(target,state,params){
+        const {proceedTime,addTodoList,removeTodoList,navigateToLogin:onClickLogin} = params;
+        new Clock({$app:target,initialState:state,proceedTime,onClickLogin});
+        new GeoLocation({$app:target,initialState:state})
+        new TodoList({$app:target,initialState:state,onClickAddBtn:addTodoList,onClickRemoveBtn:removeTodoList});
     },
-    '/login': function(){
-        new Clock({$app:this.$target,initialState:this.state,proceedTime:this.proceedTime,onClickLogin:this.navigateToLogin.bind(this),onClickSignin:this.navigateToSignin.bind(this)});
-        new GeoLocation({$app:this.$target,initialState:this.state})
-        new Login({$app:this.$target,initialState:this.state})
-    },
-    '/signin': function(){
-        new Clock({$app:this.$target,initialState:this.state,proceedTime:this.proceedTime,onClickLogin:this.navigateToLogin.bind(this),onClickSignin:this.navigateToSignin.bind(this)});
-        new GeoLocation({$app:this.$target,initialState:this.state})
-        new Signin({$app:this.$target,initialState:this.state})
+    '/login': function(target,state,params){
+        const {proceedTime,onLogin,navigateToHome} = params;
+        new Clock({$app:target,initialState:state,proceedTime});
+        new GeoLocation({$app:target,initialState:state,})
+        new Login({$app:target,initialState:state,onLogin,navigateToHome})
     },
 };
 
-export function initialRouter(){
-    window.history.pushState(this.state, null, window.location.origin + "/");
-    routes["/"].call(this);
+export function initialRouter(target,nextState,params){
+    window.history.pushState({}, null, window.location.origin + "/");
+    routes["/"](target,nextState,params);
     window.addEventListener('popstate',(e)=>{
-        this.$target.innerHTML = ''
-        routes[window.location.pathname].call(this);
+        target.innerHTML = ''
+        routes[window.location.pathname](target,e.state,params);
     })
 }
 
-export function historyRouterPush(pathName) {
-    this.$target.innerHTML =''
-    window.history.pushState(this.state, pathName, window.location.origin + pathName);
-    routes[pathName].call(this)
+export function historyRouterPush(pathName,target,nextState,params) {
+    target.innerHTML  =''
+    window.history.pushState(nextState, null, window.location.origin + pathName);
+    routes[pathName](target,nextState,params)
 }

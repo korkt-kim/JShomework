@@ -1,9 +1,20 @@
 import component from './core/component.js'
 
 export default class TodoList extends component{
-    constructor({$app,initialState}){
+    constructor({$app,initialState,onClickAddBtn,onClickRemoveBtn}){
         super({$app,initialState,tagName:'div',className:'todoList'});
+        this.onClickAddBtn = onClickAddBtn;
+        this.onClickRemoveBtn = onClickRemoveBtn;
+    }
 
+    setEvent(){
+        this.$target.addEventListener('click',(e)=>{
+            if(e.target.closest('.addTodoListBtn')){
+                e.preventDefault();
+                const textInput = this.$target.querySelector('.addTodo').value;
+                this.onClickAddBtn(textInput)
+            }
+        })
     }
 
     render(){
@@ -16,10 +27,9 @@ export default class TodoList extends component{
             <form>
                 <ul class="todoList">
                     ${this.state.todoList.map(todo=>{
-                        return `<input type="check"></input><li>${todo}</li>`
+                        return `<li>${todo}</li>`
                     }).join('')}
                 </ul>
-                <button type="submit" class="removeTodoListBtn">remove</button>
             </form>
         `
     }

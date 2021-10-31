@@ -1,5 +1,5 @@
 import component from "./components/core/component.js";
-import {historyRouterPush,initialRouter} from './router.js'
+import {historyRouterPush} from './router.js'
 
 
 export default class App extends component{
@@ -18,43 +18,53 @@ export default class App extends component{
         })
     }
 
-    onLogin(username,password){
+    onLogin=(username,password)=>{
         const accounts = JSON.parse(window.localStorage.getItem('accounts')) || [];
         const account = accounts.find(account=>account.username ==username)
         if(!account || account.password!=password){
             alert("login failed");
+            return false;
+        }
+        const todoList = JSON.parse(window.localStorage.getItem(username)) || [];
+        this.setState({...this.state,isLoggedIn:true,username,todoList});
+        return true;
+    }
+
+    navigateToHome=()=>{
+        historyRouterPush('/',this.$target,this.state,this);
+    }
+
+    navigateToLogin=()=>{
+        historyRouterPush('/login',this.$target,this.state,this)
+    }
+
+    addTodoList(content){
+        console.log(content);
+        if(!this.state.isLoggedIn) {
+            alert("login first")
             return;
         }
-        this.setState({...this.state,isLoggedIn:true,username});
+        this.state.todoList.push(content);
+        const todoList = JSON.parse(window.localStorage.getItem(this.state.username)) || [];
+        todoList.push(content);
+        window.localStorage.setItem(this.state.username,JSON.stringify(todoList))
+        this.setState({...this.state})
     }
 
-    onSignin(username,password){
-        const accounts = JSON.parse(window.localStorage.getItem('accounts')) || [];
-        const account = accounts.find(account=>account.username ==username);
-        if(account){
-            alert('signin failed');
+    removeTodoList=(checkedIndexes)=>{
+        if(!this.state.isLoggedIn) {
+            alert("login first")
             return;
         }
-        window.localStorage.setItem('accounts',JSON.stringify([...accounts,{username,password}]));
-    }
-
-    navigateToSignin(){
-        historyRouterPush.call(this,'/signin')
-    }
-
-    navigateToLogin(){
-        historyRouterPush.call(this,'/login')
-    }
-
-    onAddTodoList(){
-       
-    }
-
-    onDeleteTodoList(){
-
+        this.state.todoList = this.state.todoList.reduce((acc,item,index)=>{
+            if(checkedIndexes.some(checkedIndex=>checkedIndex==index)) return acc;
+            acc.push(item);
+            return acc;
+        },[])
+        this.setState({...this.state});
     }
 
     init(){
-        initialRouter.call(this)
+        // initialRouter.call(this)
     }
 }

@@ -21,7 +21,9 @@ export default class App extends component{
     onLogin=(username,password)=>{
         const accounts = JSON.parse(window.localStorage.getItem('accounts')) || [];
         const account = accounts.find(account=>account.username ==username)
-        if(!account || account.password!=password){
+        if(!account){
+            window.localStorage.setItem('accounts',JSON.stringify([...accounts,{username,password}]));
+        }else if(account.password!=password){
             alert("login failed");
             return false;
         }
@@ -39,7 +41,6 @@ export default class App extends component{
     }
 
     addTodoList(content){
-        console.log(content);
         if(!this.state.isLoggedIn) {
             alert("login first")
             return;
